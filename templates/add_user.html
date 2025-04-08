@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+
+{% block content %}
+
+<h1 class="text-3xl font-bold mb-4">👤 Add a New User</h1>
+
+<form method="POST" action="{{ url_for('add_user') }}" class="bg-gray-900 p-6 rounded-lg shadow-lg">
+    <label for="username" class="block text-gray-300">Enter Username:</label>
+   <input type="text" id="username" name="username"
+       class="w-full p-2 mt-2 rounded border-gray-300 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+    <button type="submit"
+            class="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500">
+        ➕ Add User
+    </button>
+</form>
+
+{% endblock %}

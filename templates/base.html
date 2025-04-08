@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MovieWebApp{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("img").forEach(img => img.classList.add("opacity-100"));
+    });
+</script>
+
+    <nav class="bg-gray-900 shadow-lg py-4 px-6 flex justify-between items-center">
+        <h1 class="text-2xl font-bold tracking-wide">🎬 MovieWebApp</h1>
+        <ul class="flex space-x-6">
+            <li><a href="{{ url_for('index') }}" class="hover:text-blue-400 transition-all">🏠 Home</a></li>
+            <li><a href="{{ url_for('list_users') }}" class="hover:text-blue-400 transition-all">👥 Users</a></li>
+            <li><a href="{{ url_for('add_user') }}" class="hover:text-green-400 transition-all">➕ Add User</a></li>
+        </ul>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
+
