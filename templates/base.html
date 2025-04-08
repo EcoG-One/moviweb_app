@@ -5,25 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MovieWebApp{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        h1 {
+            text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+        }
+        .highlight {
+            color: #ff6347;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+<body class="bg-gradient-to-br from-emerald-400 to-indigo-400 text-white min-h-screen flex flex-col font-mono">
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll("img").forEach(img => img.classList.add("opacity-100"));
-    });
-</script>
+<header class="text-gray-600 body-font">
+  <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+	<a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 0 64 64"
+          width="64px"
+          height="64px"
+        >
+          <rect width="64" height="64" fill="#000" />
+          <g transform="translate(8, 8)">
+            <path
+              d="M48 8H16a4 4 0 0 0-4 4v32a4 4 0 0 0 4 4h32a4 4 0 0 0 4-4V12a4 4 0 0 0-4-4zm0 36H16V12h32z"
+              fill="#fff"
+            />
+            <path
+              d="M32.5 22.5L24 29l8.5 6.5z"
+              fill="#fff"
+            />
+          </g>
+        </svg>
+	  <span class="ml-3 text-xl text-shadow-lg/30 hover:text-gray-900">MoviWeb</span>
+	</a>
+	<nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+	  <a href="{{ url_for('index') }}" class="mr-5 hover:text-gray-900">Home</a>
+	  <a href="{{ url_for('list_users') }}" class="mr-5 hover:text-gray-900">Users</a>
+	  <a href="{{ url_for('add_user') }}" class="mr-5 hover:text-gray-900">Add User</a>
+	</nav>
+  </div>
+</header>
 
-    <nav class="bg-gray-900 shadow-lg py-4 px-6 flex justify-between items-center">
-        <h1 class="text-2xl font-bold tracking-wide">🎬 MovieWebApp</h1>
-        <ul class="flex space-x-6">
-            <li><a href="{{ url_for('index') }}" class="hover:text-blue-400 transition-all">🏠 Home</a></li>
-            <li><a href="{{ url_for('list_users') }}" class="hover:text-blue-400 transition-all">👥 Users</a></li>
-            <li><a href="{{ url_for('add_user') }}" class="hover:text-green-400 transition-all">➕ Add User</a></li>
-        </ul>
-    </nav>
-
-    <div class="container mx-auto p-6">
+    <div class="mx-auto flex-grow">
         {% block content %}{% endblock %}
     </div>
 

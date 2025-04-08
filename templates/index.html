@@ -2,18 +2,16 @@
 {% block title %}Home - MovieWebApp{% endblock %}
 
 {% block content %}
-<h1 class="text-4xl font-bold text-center my-8">🍿 Welcome to MovieWebApp</h1>
-
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-
-    {% for poster in posters %}
-    <div class="h-auto w-full flex justify-center items-center">
-        <img src="{{ poster }}" alt="Random Movie Poster"
-        class="w-full h-full object-cover rounded-lg shadow-lg opacity-0 transition-opacity duration-1000">
-    </div>
-    {% endfor %}
+<div class="text-4xl font-semibold text-center p-4 text-gray-300">
+<h1>Welcome to your MoviWeb App</h1>
 </div>
-
-<h2 class="text-4xl font-bold text-center my-8">Your cinematic experience starts right here</h2>
-
+<div  class="max-w-full">
+    <video autoplay muted loop>
+        <source src="{{ url_for('static', filename='images/couple.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+<h2 class="text-2xl font-semibold text-center mt-12 text-gray-300">
+    Your cinematic experience starts right here
+</h2>
 {% endblock %}

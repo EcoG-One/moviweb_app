@@ -29,21 +29,7 @@ data_manager = SQLiteDataManager(app, db)
 @app.route("/")
 def index():
     """ Render the home page """
-    random_titles = [
-        "Inception", "The Matrix", "The Dark Knight", "Interstellar",
-        "Pulp Fiction", "Fight Club", "The Godfather", "Blade Runner",
-        "The Crow", "Mad Max", "12 Monkeys", "Terminator 2"
-    ]
-
-    selected_titles = random.sample(random_titles, 6)
-    posters = []
-
-    for title in selected_titles:
-        movie_data = fetch_movie_data(title)
-        if movie_data and "Poster" in movie_data:
-            posters.append(movie_data["Poster"])
-
-    return render_template("index.html", posters=posters)
+    return render_template("index.html")
 
 
 @app.route('/users')

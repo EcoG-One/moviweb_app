@@ -2,18 +2,21 @@
 {% block title %}Add Movie{% endblock %}
 
 {% block content %}
+<h1 class="text-3xl font-bold mb-6 text-center">🎬 Add a Movie</h1>
 
-<h1 class="text-3xl font-bold mb-4">🎬 Add a Movie</h1>
+<div class="flex justify-center">
+    <form method="POST" class="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md space-y-6">
+        <div>
+            <label for="title" class="block text-sm font-semibold mb-1">Movie Title</label>
+            <input type="text" name="title" id="title" required
+                class="w-full p-3 bg-gray-900 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-white">
+        </div>
 
-<form method="POST" class="bg-gray-900 p-6 rounded-lg shadow-lg w-96">
-    <label class="block text-sm font-medium">Movie Title:</label>
-    <input type="text" name="title" required
-           class="mt-1 p-2 w-full bg-gray-800 border border-gray-700 rounded text-white">
-
-    <button type="submit" class="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500">
-        Add Movie
-    </button>
-</form>
-
+        <button type="submit"
+            class="w-full py-3 bg-green-600 hover:bg-green-500 rounded-md font-bold transition duration-300">
+            ➕ Add Movie
+        </button>
+    </form>
+</div>
 {% endblock %}
 
