@@ -2,38 +2,28 @@
 {% block title %}Users - MovieWeb App{% endblock %}
 
 {% block content %}
-
-<h1 class="text-3xl font-bold mb-4">👥 Users</h1>
-
-<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-    <ul>
-    {% for user in users %}
-        <li>
-            <div class="bg-gray-900 p-4 rounded-lg shadow-lg flex items-center gap-4 p-4">
-
-            <div class="w-12 h-12 bg-blue-600 text-white flex items-center justify-center rounded-full text-lg font-bold">
-                {{ user.get_initials() }}
-            </div>
-    <div>
-        <h2 class="text-xl font-semibold">{{ user.name }}</h2>
-        <a href="{{ url_for('user_movies', user_id=user.id) }}"
-           class="mt-2 block px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 text-center">
-           🎬 View Movies
-        </a>
-    </div>
-</div>
+<div class="justify-items-center">
+<h1 class="text-3xl font-bold mb-4">Users</h1>
+<div class="flex flex-wrap justify-center gap-4">
+    <ul class="flex flex-wrap justify-center gap-4">
+        {% for user in users %}
+        <li class="flex-none w-32 h-40">
+            <a href="{{ url_for('user_movies', user_id=user.id) }}">
+                <div class="flex flex-col items-center justify-center w-full h-full px-3 py-1 text-white rounded hover:bg-emerald-300 text-center">
+                    <img class="w-16 h-16 rounded-full" src="https://api.dicebear.com/9.x/adventurer/svg?seed={{ user.name }}" alt="avatar"/>
+                    <span class="mt-2 truncate">{{ user.name }}</span>
+                </div>
+            </a>
         </li>
-    {% endfor %}
+        {% endfor %}
     </ul>
 </div>
 
-<div class="bg-gray-900 p-4 rounded-lg shadow-lg text-center mt-6">
+<div class="bg-gray-900 p-4 rounded-lg shadow-lg text-center mt-6 w-40">
     <a href="{{ url_for('add_user') }}" 
        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500">
-       ➕ Add User
+       Add User
     </a>
 </div>
-
-{% endblock %}
-
 </div>
+{% endblock %}

@@ -12,11 +12,6 @@ class User(db.Model):
     avatar = Column(String(200), default="")
     movies = relationship('Movie', secondary='user_movies', backref='users')
 
-
-    def get_initials(self):
-        """Generate user initials from their name"""
-        return "".join([part[0] for part in self.name.split()][:2]).upper()
-
     def __repr__(self):
         return f'User name: {self.name}'
 

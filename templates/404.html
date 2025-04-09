@@ -2,7 +2,7 @@
 {% block title %}Home - MovieWebApp{% endblock %}
 
 {% block content %}
-<h1>404</h1>
-<h2>"The path you seek does not exist" 🕶</h2>
-<h2>"Perhaps it never did..."   </h2>
+<h1 class="text-4xl font-semibold text-center p-4 text-gray-300">404</h1>
+<h2 class="text-2xl font-semibold text-center mt-12 text-indigo-800">The web page you are trying to access could not be found on the server.</h2>
+<img src="{{ url_for('static', filename='images/404.png') }}" alt="Error 404">
 {% endblock %}

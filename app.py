@@ -1,5 +1,4 @@
 import os
-import random
 from flask import Flask, render_template, request, redirect, url_for
 from models import db, User
 import requests
@@ -12,24 +11,25 @@ OMDB_URL = "http://www.omdbapi.com/"
 
 app = Flask(__name__)
 
-if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-    print("Starting Flask App...")
-
 db_path = os.path.join(os.getcwd(), "data", "movies.sqlite")
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
-
-
-# with app.app_context():
-#     db.create_all()
+try:
+    db.init_app(app)
+except Exception as e:
+    print("An Error occurred: ", str(e))
+    render_template("index.html")
 
 data_manager = SQLiteDataManager(app, db)
 
 @app.route("/")
 def index():
     """ Render the home page """
-    return render_template("index.html")
+    try:
+        users = data_manager.get_all_users()
+        return render_template('index.html', users=users)
+    except Exception as e:
+        return "An error occurred", 500
 
 
 @app.route('/users')
@@ -98,11 +98,15 @@ def add_movie(user_id):
             title = request.form.get('title')
             if not title:
                 return "Movie title is required!", 400
-
+            movies_list = data_manager.get_user_movies(user_id)
+            for movie in movies_list:
+                if title == movie.title:
+                    return render_template('add_movie.html', message="Movie already in your favorites.<br>Please try another.",
+                                       user_id=user_id), 400
             raw_data = fetch_movie_data(title)
             if not raw_data or "Error" in raw_data:
                 error_message = raw_data.get("Error", "Movie not found. Check the title and try again.")
-                return render_template('error.html', message=error_message, user_id=user_id), 400
+                return render_template('add_movie.html', message=error_message, user_id=user_id), 400
 
             movie_data = extract_movie_data(raw_data)
 
@@ -231,6 +235,6 @@ def extract_movie_data(raw_data):
 
 
 if __name__ == "__main__":
-    print("✅ Running Flask App...")
-    app.run(host="0.0.0.0", port=5002, debug=True, use_reloader=False)
+    print("Running Flask App...")
+    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
 

@@ -2,9 +2,12 @@
 {% block title %}Home - MovieWebApp{% endblock %}
 
 {% block content %}
-    <h2>❌ {{ message }}</h2>
-    <p>The movie you searched for could not be found. Please check the title and try again.</p>
+    <div class="flex justify-center">
+    <h2 class="animate-flash text-xl text-red-500">{{ message }}</h2>
+</div>
     <a href="{{ url_for('add_movie', user_id=user_id) }}">
-        <button>🔄 Try Again</button>
+        <button class="bg-blue-500 transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 ...">
+  try again
+</button>
     </a>
 {% endblock %}

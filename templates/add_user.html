@@ -6,8 +6,8 @@
 <h1 class="text-3xl font-bold mb-4">👤 Add a New User</h1>
 
 <form method="POST" action="{{ url_for('add_user') }}" class="bg-gray-900 p-6 rounded-lg shadow-lg">
-    <label for="username" class="block text-gray-300">Enter Username:</label>
-   <input type="text" id="username" name="username"
+    <label for="username" class="block text-gray-300">Enter Username: </label>
+   <input type="text" id="username" name="username" maxlength="16" required
        class="w-full p-2 mt-2 rounded border-gray-300 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
 
     <button type="submit"
