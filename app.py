@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, send_from_directory, url_for
 from models import db, User
 import requests
 from dotenv import load_dotenv
@@ -22,6 +22,11 @@ except Exception as e:
     render_template("error.html", message = e), 500
 
 data_manager = SQLiteDataManager(app, db)
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                    'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 @app.route("/")
