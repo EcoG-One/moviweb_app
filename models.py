@@ -9,7 +9,6 @@ class User(db.Model):
     """ Represents a user in the digital library """
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    avatar = Column(String(200), default="")
     movies = relationship('Movie', secondary='user_movies', backref='users')
 
     def __repr__(self):

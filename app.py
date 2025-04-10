@@ -17,8 +17,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 try:
     db.init_app(app)
 except Exception as e:
-    print("An Error occurred: ", str(e))
-    render_template("index.html")
+    print(e)
+    render_template("error.html", message = e), 500
 
 data_manager = SQLiteDataManager(app, db)
 
@@ -29,7 +29,8 @@ def index():
         users = data_manager.get_all_users()
         return render_template('index.html', users=users)
     except Exception as e:
-        return "An error occurred", 500
+        print(e)
+        render_template('error.html', message = e), 500
 
 
 @app.route('/users')
@@ -39,7 +40,8 @@ def list_users():
         users = data_manager.get_all_users()
         return render_template('users.html', users=users)
     except Exception as e:
-        return "An error occurred", 500
+        print(e)
+        render_template('error.html', message = e), 500
 
 
 @app.route('/users/<user_id>')
@@ -54,7 +56,8 @@ def user_movies(user_id):
         return render_template('user_movies.html', user=user, movies=movies)
 
     except Exception as e:
-        return "An unexpected error occurred", 500
+        print(e)
+        render_template('error.html', message = e), 500
 
 
 
@@ -66,14 +69,14 @@ def add_user():
     try:
         if request.method == 'POST':
             username = request.form.get('username')
-            if not username:
-                return "Username is required!", 400
-
-            # Generate avatar URL from initials
-            avatar_url = f"https://ui-avatars.com/api/?name={username}&background=random&color=fff&size=128&rounded=true"
-
-            # Create user with avatar
-            new_user = User(name=username, avatar=avatar_url)
+            if not username or username.strip() == "":
+                return render_template('add_user.html',
+                                       message="Username is required!"), 400
+            users_list = data_manager.get_all_users()
+            for user in users_list:
+                if username == user.name:
+                    return render_template('add_user.html', message="This User Name already exists.<br>Please try another."), 400
+            new_user = User(name=username)
             db.session.add(new_user)
             db.session.commit()
             return redirect(url_for('list_users'))
@@ -81,7 +84,8 @@ def add_user():
         return render_template('add_user.html')
 
     except Exception as e:
-        return "An unexpected error occurred", 500
+        print(e)
+        return render_template('error.html', message = e), 500
 
 
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
@@ -96,8 +100,10 @@ def add_movie(user_id):
 
         if request.method == 'POST':
             title = request.form.get('title')
-            if not title:
-                return "Movie title is required!", 400
+            if not title or title.strip() == "":
+                return render_template('add_movie.html',
+                                       message="Movie title is required!",
+                                       user_id=user_id), 400
             movies_list = data_manager.get_user_movies(user_id)
             for movie in movies_list:
                 if title == movie.title:
@@ -123,12 +129,14 @@ def add_movie(user_id):
             if success:
                 return redirect(url_for('user_movies', user_id=user_id))
             else:
-                return "Error adding movie", 500
+                print("Error adding movie:", title)
+                return render_template('error.html', message = "Error adding movie"), 500
 
         return render_template('add_movie.html', user=user)
 
     except Exception as e:
-        return "An unexpected error occurred", 500
+        print(e)
+        return render_template('error.html', message=e), 500
 
 
 @app.route('/users/<user_id>/update_movie/<movie_id>', methods=['GET', 'POST'])
@@ -152,16 +160,17 @@ def update_movie(user_id, movie_id):
             year = request.form.get('year')
             rating = request.form.get('rating')
 
-            if not title or not director or not year or not rating:
-                return "All fields are required!", 400
+            if not title or not director or not year or not rating or title.strip() == "" or director.strip() == "":
+                return render_template('update_movie.html', user = user, movie = movie, message = "All fields are required!"), 400
 
             data_manager.update_movie(movie_id, title, director, year, rating)
             return redirect(url_for('user_movies', user_id=user_id))
 
-        return render_template('update_movie.html', user=user, movie=movie)
+        return render_template('update_movie.html', user = user, movie = movie)
 
     except Exception as e:
-        return "An unexpected error occurred", 500
+        print(e)
+        return render_template('error.html', message = e), 500
 
 
 @app.route('/users/<user_id>/delete_movie/<movie_id>', methods=['POST'])
@@ -182,7 +191,8 @@ def delete_movie(user_id, movie_id):
         return redirect(url_for("user_movies", user_id=user_id))
 
     except Exception as e:
-        return "An unexpected error occurred", 500
+        print(e)
+        return render_template('error.html', message=e), 500
 
 
 @app.errorhandler(404)
@@ -211,7 +221,8 @@ def fetch_movie_data(title):
         return {"Error": f"Request failed with status code {response.status_code}"}
 
     except Exception as e:
-        return None
+        print(e)
+        return render_template('error.html', message=e), 500
 
 
 def extract_movie_data(raw_data):
@@ -231,7 +242,8 @@ def extract_movie_data(raw_data):
         return {"Title": title, "Director": director, "Year": year, "Rating": rating, "Genre":genre, "Poster": poster}
 
     except Exception as e:
-        return {"Error": str(e)}
+        print(e)
+        return render_template('error.html', message=e), 500
 
 
 if __name__ == "__main__":
