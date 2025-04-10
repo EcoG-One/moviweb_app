@@ -14,6 +14,7 @@ app = Flask(__name__)
 db_path = os.path.join(os.getcwd(), "data", "movies.sqlite")
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 try:
     db.init_app(app)
 except Exception as e:
@@ -22,31 +23,38 @@ except Exception as e:
 
 data_manager = SQLiteDataManager(app, db)
 
+
 @app.route("/")
 def index():
-    """ Render the home page """
+    """
+    Renders the home page template using the list of all users
+    """
     try:
         users = data_manager.get_all_users()
         return render_template('index.html', users=users)
     except Exception as e:
         print(e)
-        render_template('error.html', message = e), 500
+        return render_template('error.html', message = e), 500
 
 
 @app.route('/users')
 def list_users():
-    """ Display a list of all users  registered in app"""
+    """
+    Renders the users HTML template using the list of all users
+    """
     try:
         users = data_manager.get_all_users()
         return render_template('users.html', users=users)
     except Exception as e:
         print(e)
-        render_template('error.html', message = e), 500
+        return render_template('error.html', message = e), 500
 
 
 @app.route('/users/<user_id>')
 def user_movies(user_id):
-    """ Show a user's list of favorite movies """
+    """
+    Renders the HTML template of a user's list of favorite movies
+    """
     try:
         user = data_manager.get_user(user_id)
         if not user:
@@ -57,14 +65,13 @@ def user_movies(user_id):
 
     except Exception as e:
         print(e)
-        render_template('error.html', message = e), 500
-
+        return render_template('error.html', message = e), 500
 
 
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
     """
-    Presents a form that enables the addition of a new user to the App
+    Renders a form to add a new user
     """
     try:
         if request.method == 'POST':
@@ -75,7 +82,9 @@ def add_user():
             users_list = data_manager.get_all_users()
             for user in users_list:
                 if username == user.name:
-                    return render_template('add_user.html', message="This User Name already exists.<br>Please try another."), 400
+                    return render_template('add_user.html',
+                            message="This User Name already exists."
+                                    "<br>Please try another."), 400
             new_user = User(name=username)
             db.session.add(new_user)
             db.session.commit()
@@ -90,7 +99,8 @@ def add_user():
 
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
 def add_movie(user_id):
-    """Displays a form to add a new movie to a user’s list
+    """
+    Renders a form to add a new movie to a user’s list
         of favorite movies.
     """
     try:
@@ -107,12 +117,16 @@ def add_movie(user_id):
             movies_list = data_manager.get_user_movies(user_id)
             for movie in movies_list:
                 if title == movie.title:
-                    return render_template('add_movie.html', message="Movie already in your favorites.<br>Please try another.",
+                    return render_template('add_movie.html',
+                            message="Movie already in your favorites."
+                                    "<br>Please try another.",
                                        user_id=user_id), 400
             raw_data = fetch_movie_data(title)
             if not raw_data or "Error" in raw_data:
-                error_message = raw_data.get("Error", "Movie not found. Check the title and try again.")
-                return render_template('add_movie.html', message=error_message, user_id=user_id), 400
+                error_message = raw_data.get("Error", "Movie not found. "
+                                             "Check the title and try again.")
+                return render_template('add_movie.html', message=error_message,
+                                       user_id=user_id), 400
 
             movie_data = extract_movie_data(raw_data)
 
@@ -130,7 +144,8 @@ def add_movie(user_id):
                 return redirect(url_for('user_movies', user_id=user_id))
             else:
                 print("Error adding movie:", title)
-                return render_template('error.html', message = "Error adding movie"), 500
+                return render_template('error.html',
+                                       message = "Error adding movie"), 500
 
         return render_template('add_movie.html', user=user)
 
@@ -139,11 +154,11 @@ def add_movie(user_id):
         return render_template('error.html', message=e), 500
 
 
-@app.route('/users/<user_id>/update_movie/<movie_id>', methods=['GET', 'POST'])
+@app.route('/users/<user_id>/update_movie/<movie_id>',
+           methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
     """
-    Displays a form allowing for the updating of details
-    of a specific movie in a user’s list.
+    Renders a form to update a movie.
     """
     try:
         user = data_manager.get_user(user_id)
@@ -160,8 +175,10 @@ def update_movie(user_id, movie_id):
             year = request.form.get('year')
             rating = request.form.get('rating')
 
-            if not title or not director or not year or not rating or title.strip() == "" or director.strip() == "":
-                return render_template('update_movie.html', user = user, movie = movie, message = "All fields are required!"), 400
+            if (not title or not director or not year or not rating
+                    or title.strip() == "" or director.strip() == ""):
+                return render_template('update_movie.html', user = user,
+                     movie = movie, message = "All fields are required!"), 400
 
             data_manager.update_movie(movie_id, title, director, year, rating)
             return redirect(url_for('user_movies', user_id=user_id))
@@ -196,17 +213,19 @@ def delete_movie(user_id, movie_id):
 
 
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found():
     return render_template('404.html'), 404
 
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return "Something went wrong on our end. We're on it!", 500
+    return e, 500
 
 
 def fetch_movie_data(title):
-    """ Fetch movie data from the OMDb API by title """
+    """
+    Fetch movie data from the OMDb API by title
+    """
     try:
         url = f"{OMDB_URL}?apikey={API_KEY}&t={title}"
         response = requests.get(url)
@@ -218,7 +237,8 @@ def fetch_movie_data(title):
             else:
                 return {"Error": data.get("Error", "Movie not found!")}
 
-        return {"Error": f"Request failed with status code {response.status_code}"}
+        return {"Error": f"Request failed with status code "
+                         f"{response.status_code}"}
 
     except Exception as e:
         print(e)
@@ -226,7 +246,9 @@ def fetch_movie_data(title):
 
 
 def extract_movie_data(raw_data):
-    """ Extracts relevant fields from raw OMDb data """
+    """
+    Extracts relevant fields from raw OMDb data
+    """
     try:
         title = raw_data.get("Title", "N/A")
         director = raw_data.get("Director", "N/A")
@@ -239,7 +261,8 @@ def extract_movie_data(raw_data):
         genre = raw_data.get("Genre", "N/A")
         poster = raw_data.get("Poster", "N/A")
 
-        return {"Title": title, "Director": director, "Year": year, "Rating": rating, "Genre":genre, "Poster": poster}
+        return {"Title": title, "Director": director, "Year": year,
+                "Rating": rating, "Genre":genre, "Poster": poster}
 
     except Exception as e:
         print(e)

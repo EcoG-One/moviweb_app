@@ -6,7 +6,9 @@ db = SQLAlchemy()
 
 class User(db.Model):
     __tablename__ = 'users'
-    """ Represents a user in the digital library """
+    """ 
+    Blueprint for user in database 
+    """
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     movies = relationship('Movie', secondary='user_movies', backref='users')
@@ -17,7 +19,9 @@ class User(db.Model):
 
 class Movie(db.Model):
     __tablename__ = 'movies'
-    """ Represents a film in the digital library """
+    """
+    Blueprint for movie in database
+    """
     id = Column(Integer, primary_key=True)
     title = Column(String(100))
     director = Column(String(100))
@@ -29,8 +33,11 @@ class Movie(db.Model):
     def __repr__(self):
         return f'Film {self.name} from {self.year}'
 
+
 user_movies = db.Table('user_movies',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-    db.Column('movie_id', db.Integer, db.ForeignKey('movies.id'), primary_key=True)
-)
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'),
+              primary_key=True),
+    db.Column('movie_id', db.Integer, db.ForeignKey('movies.id'),
+              primary_key=True)
+                       )
 
